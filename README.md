@@ -82,4 +82,4 @@ O projeto está pronto para ser implantado em uma instância AWS EC2, utilizando
     *   Lembre-se de configurar o **Security Group** da EC2 para liberar a porta de acesso (ex: 80 ou 8000).
 
 ---
-**Desenvolvido por:** Moreno Jones e Carlos Caetano - 4º Período de Ciência da Computação.
+**Desenvolvido por:** Moreno Jones e Carlos Caetano
