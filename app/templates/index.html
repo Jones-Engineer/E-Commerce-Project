@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}DHC Store - Loja Online{% endblock %}
+
+{% block content %}
+<!-- Banner Promocional -->
+<div class="bg-gradient text-black py-5 mb-5" style="background: linear-gradient(135deg, #13205c 0%, #7350b9 100%);">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">
+            <i class="fas fa-shopping-cart"></i> Bem-vindo à DHC Store
+        </h1>
+        <p class="lead mb-0">Encontre os melhores produtos de tecnologia com preços incríveis!</p>
+    </div>
+</div>
+
+
+<!-- Filtros e Busca -->
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="input-group input-group-lg">
+                <span class="input-group-text bg-light border-0">
+                    <i class="fas fa-search"></i>
+                </span>
+                <input type="text" class="form-control border-0 bg-light" placeholder="Buscar produtos..." id="searchInput">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Listagem de Produtos -->
+<div class="container">
+    <div class="row">
+        {% if produtos.items %}
+            {% for produto in produtos.items %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card product-card shadow-sm border-0 h-100" style="transition: all 0.3s ease;">
+                        <!-- Imagem do Produto -->
+                        <div class="product-image-container position-relative overflow-hidden" style="height: 250px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+
+                            <img src="{{ url_for('static', filename='img/produto_placeholder' + produto.id|string + '.png') }}"
+                                class="card-img-top w-100 h-100 object-fit-cover"
+                                alt="{{ produto.nome }}"
+                                data-placeholder-src="{{ url_for('static', filename='img/produto_placeholder.png') }}"
+                                onerror="this.onerror=null; this.src=this.dataset.placeholderSrc;">
+
+                            
+                            <!-- Badge de Estoque -->
+                            {% if produto.estoque > 0 %}
+                                <span class="badge bg-success position-absolute top-2 end-2">
+                                    <i class="fas fa-check-circle"></i> Em Estoque
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger position-absolute top-2 end-2">
+                                    <i class="fas fa-times-circle"></i> Fora de Estoque
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        
+                        <!-- Corpo do Card -->
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-dark mb-2">{{ produto.nome }}</h5>
+                            
+                            <p class="card-text text-muted small mb-3">
+                                {{ produto.descricao[:60] }}{% if produto.descricao|length > 60 %}...{% endif %}
+                            </p>
+
+                            <!-- Preço -->
+                            <div class="mb-3">
+                                <h3 class="text-success fw-bold mb-1">R$ {{ "%.2f"|format(produto.preco) }}</h3>
+                                <small class="text-muted">
+                                    {% if produto.estoque > 0 %}
+                                        <i class="fas fa-warehouse"></i> {{ produto.estoque }} unidades disponíveis
+                                    {% else %}
+                                        <i class="fas fa-ban"></i> Indisponível
+                                    {% endif %}
+                                </small>
+                            </div>
+
+                            <!-- Botões de Ação -->
+                            <div class="mt-auto">
+                                <a href="{{ url_for('main.detalhes_produto', produto_id=produto.id) }}" 
+                                   class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                    <i class="fas fa-eye"></i> Ver Detalhes
+                                </a>
+                                {% if produto.estoque > 0 %}
+                                    <form method="POST" action="{{ url_for('main.adicionar_carrinho', produto_id=produto.id) }}" class="d-grid">
+                                        <input type="hidden" name="quantidade" value="1">
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-secondary btn-sm w-100" disabled>
+                                        <i class="fas fa-ban"></i> Indisponível
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-5">
+                    <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                    <h4>Nenhum produto encontrado</h4>
+                    <p class="text-muted">Tente novamente mais tarde ou entre em contato conosco.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Paginação -->
+    {% if produtos.pages > 1 %}
+        <nav aria-label="Paginação de Produtos" class="mt-5 mb-5">
+            <ul class="pagination justify-content-center">
+                <!-- Página Anterior -->
+                {% if produtos.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.index', page=produtos.prev_num) }}">
+                            <i class="fas fa-chevron-left"></i> Anterior
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link"><i class="fas fa-chevron-left"></i> Anterior</span>
+                    </li>
+                {% endif %}
+
+                <!-- Números de Página -->
+                {% for page_num in produtos.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num == produtos.page %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page_num }}</span>
+                            </li>
+                        {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('main.index', page=page_num) }}">{{ page_num }}</a>
+                            </li>
+                        {% endif %}
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Próxima Página -->
+                {% if produtos.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.index', page=produtos.next_num) }}">
+                            Próxima <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">Próxima <i class="fas fa-chevron-right"></i></span>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+
+<!-- Estilos Customizados -->
+<style>
+    .product-card {
+        border-radius: 12px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .product-image-container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .product-image-container img {
+        transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-image-container img {
+        transform: scale(1.05);
+    }
+
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .input-group {
+        border-radius: 50px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .input-group input {
+        border-radius: 50px !important;
+    }
+</style>
+
+<!-- Script para Busca em Tempo Real (Opcional) -->
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const cards = document.querySelectorAll('.product-card');
+        
+        cards.forEach(card => {
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            const description = card.querySelector('.card-text').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                card.parentElement.style.display = 'block';
+            } else {
+                card.parentElement.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

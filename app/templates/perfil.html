@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - DHC Store{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Seção de Dados Pessoais -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-user-circle"></i> Meus Dados Pessoais
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.perfil') }}">
+                        <div class="mb-3">
+                            <label for="nome" class="form-label"><strong>Nome Completo</strong></label>
+                            <input type="text" class="form-control" id="nome" value="{{ cliente.nome }}" disabled>
+                            <small class="text-muted">Este campo não pode ser alterado</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label"><strong>E-mail</strong></label>
+                            <input type="email" class="form-control" id="email" value="{{ cliente.email }}" disabled>
+                            <small class="text-muted">Este campo não pode ser alterado</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="endereco" class="form-label"><strong>Endereço de Entrega</strong></label>
+                            <input type="text" class="form-control" id="endereco" name="endereco" 
+                                   placeholder="Rua, número, bairro, cidade, estado" 
+                                   value="{{ cliente.endereco or '' }}">
+                            <small class="text-muted">Será usado para entrega de pedidos</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="telefone" class="form-label"><strong>Telefone/Celular</strong></label>
+                            <input type="tel" class="form-control" id="telefone" name="telefone" 
+                                   placeholder="(XX) XXXXX-XXXX" 
+                                   value="{{ cliente.telefone or '' }}">
+                            <small class="text-muted">Para contato sobre seus pedidos</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Membro desde</strong></label>
+                            <p class="form-control-plaintext">
+                                {{ cliente.data_criacao.strftime('%d de %B de %Y') if cliente.data_criacao else 'Data não disponível' }}
+                            </p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-save"></i> Salvar Alterações
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Resumo da Conta -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-chart-bar"></i> Resumo da Conta
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h5 class="text-muted">Total de Pedidos</h5>
+                                <h2 class="text-primary">{{ pedidos|length }}</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="p-3 bg-light rounded">
+                                <h5 class="text-muted">Gasto Total</h5>
+                                <h2 class="text-success">
+                                    R$ {% if pedidos %}{{ "%.2f"|format(pedidos|map(attribute='total')|sum) }}{% else %}0,00{% endif %}
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="mt-3">
+                        <h5 class="text-muted">Ações Rápidas</h5>
+                        <a href="{{ url_for('main.index') }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                            <i class="fas fa-shopping-bag"></i> Continuar Comprando
+                        </a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm w-100">
+                            <i class="fas fa-sign-out-alt"></i> Sair da Conta
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Histórico de Pedidos -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-gradient" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <h4 class="mb-0 text-white">
+                        <i class="fas fa-history"></i> Meus Pedidos
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if pedidos %}
+                        <div class="table-responsive">
+                            <table class="table table-hover table-striped">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th><i class="fas fa-hashtag"></i> Pedido #</th>
+                                        <th><i class="fas fa-calendar"></i> Data</th>
+                                        <th><i class="fas fa-box"></i> Itens</th>
+                                        <th><i class="fas fa-money-bill"></i> Total</th>
+                                        <th><i class="fas fa-info-circle"></i> Status</th>
+                                        <th><i class="fas fa-eye"></i> Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pedido in pedidos %}
+                                        <tr>
+                                            <td><strong>#{{ pedido.id }}</strong></td>
+                                            <td>{{ pedido.data_pedido.strftime('%d/%m/%Y') }}</td>
+                                            <td>
+                                                {% set item_count = pedido.itens|length %}
+                                                <span class="badge bg-info">{{ item_count }} item{{ 's' if item_count != 1 else '' }}</span>
+                                            </td>
+                                            <td><strong class="text-success">R$ {{ "%.2f"|format(pedido.total) }}</strong></td>
+                                            <td>
+                                                {% if pedido.status == 'pendente' %}
+                                                    <span class="badge bg-warning">Pendente</span>
+                                                {% elif pedido.status == 'confirmado' %}
+                                                    <span class="badge bg-success">Confirmado</span>
+                                                {% elif pedido.status == 'enviado' %}
+                                                    <span class="badge bg-info">Enviado</span>
+                                                {% elif pedido.status == 'entregue' %}
+                                                    <span class="badge bg-success">Entregue</span>
+                                                {% elif pedido.status == 'cancelado' %}
+                                                    <span class="badge bg-danger">Cancelado</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ pedido.status }}</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{{ url_for('main.detalhes_pedido', pedido_id=pedido.id) }}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> Ver Detalhes
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle"></i> Você ainda não realizou nenhuma compra. 
+                            <a href="{{ url_for('main.index') }}" class="alert-link">Comece a comprar agora!</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão Voltar -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Voltar para a Loja
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Estilos Adicionais para Melhor Aparência -->
+<style>
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+</style>
+{% endblock %}

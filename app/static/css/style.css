@@ -1,0 +1,172 @@
+/* Estilos Customizados para DHC Store */
+
+:root {
+    --primary-color: #007bff; /* Azul primário */
+    --secondary-color: #6c757d; /* Cinza secundário */
+    --success-color: #28a745; /* Verde de sucesso */
+    --danger-color: #dc3545; /* Vermelho de perigo */
+    --dark-color: #343a40; /* Preto escuro */
+    --light-color: #f8f9fa; /* Cinza claro */
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--light-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navegação */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    color: var(--primary-color) !important;
+    transition: color 0.3s;
+}
+
+.navbar-brand:hover {
+    color: #0056b3 !important;
+}
+
+.navbar .nav-link {
+    color: rgba(255, 255, 255, 0.75);
+    transition: color 0.3s;
+}
+
+.navbar .nav-link:hover {
+    color: var(--light-color);
+}
+
+.navbar .btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.navbar .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Card de Produto */
+.product-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 100%; /* Garante que todos os cards tenham a mesma altura */
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-card-img {
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 1px solid #eee;
+}
+
+.product-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.product-card .card-text {
+    color: var(--secondary-color);
+    font-size: 0.9rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 linhas */
+    -webkit-box-orient: vertical;
+    min-height: 2.5rem;
+}
+
+.product-price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--success-color);
+}
+
+/* Botões */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background-color: #1e7e34;
+    border-color: #1e7e34;
+}
+
+/* Formulários de Autenticação */
+.auth-container {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-color) !important;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+footer a:hover {
+    color: var(--primary-color);
+}
+
+/* Estilos para a página de detalhes do produto */
+.product-detail-img {
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para a página de perfil */
+.profile-card .card-header {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Estilos para o Checkout */
+.card-header.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+
+.sticky-top {
+    top: 20px;
+}
+
+/* Estilos para a paginação */
+.pagination .page-item .page-link {
+    color: var(--primary-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}

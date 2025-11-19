@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Finalizar Pedido - DHC Store{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center">Finalizar Pedido</h1>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">1. Itens do Pedido</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for item in itens_carrinho %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ item.produto.nome }}</strong>
+                            <small class="text-muted d-block">Qtd: {{ item.quantidade }}</small>
+                        </div>
+                        <span class="font-weight-bold">R$ {{ "%.2f"|format(item.produto.preco * item.quantidade) }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">2. Endereço de Entrega</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>{{ current_user.nome }}</strong></p>
+                    <p>{{ current_user.endereco or 'Endereço não cadastrado. Por favor, atualize seu perfil.' }}</p>
+                    <p>Telefone: {{ current_user.telefone or 'Não informado' }}</p>
+                    <a href="{{ url_for('main.perfil') }}" class="btn btn-sm btn-outline-primary">Alterar Endereço</a>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">3. Pagamento</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('main.checkout') }}">
+                        <div class="form-group">
+                            <label for="metodo_pagamento">Selecione o Método de Pagamento:</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="metodo_pagamento" id="cartao" value="Cartão de Crédito" required>
+                                <label class="form-check-label" for="cartao">
+                                    Cartão de Crédito (Simulado)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="metodo_pagamento" id="boleto" value="Boleto Bancário" required>
+                                <label class="form-check-label" for="boleto">
+                                    Boleto Bancário (Simulado)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="metodo_pagamento" id="pix" value="PIX" required>
+                                <label class="form-check-label" for="pix">
+                                    PIX (Simulado)
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success btn-lg btn-block mt-4">
+                            <i class="fas fa-check-circle"></i> Confirmar Pedido e Pagar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h4 class="card-title">Resumo da Compra</h4>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <p>Subtotal ({{ itens_carrinho|length }} itens):</p>
+                        <p class="font-weight-bold">R$ {{ "%.2f"|format(total) }}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p>Frete:</p>
+                        <p class="font-weight-bold text-success">Grátis</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Total a Pagar:</h5>
+                        <h5 class="text-success">R$ {{ "%.2f"|format(total) }}</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

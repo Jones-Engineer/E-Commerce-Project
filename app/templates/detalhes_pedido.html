@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Pedido #{{ pedido.id }} - DHC Store{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Detalhes do Pedido #{{ pedido.id }}</h1>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Itens do Pedido</h5>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for item in pedido.itens %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ item.produto.nome }}</strong>
+                            <small class="text-muted d-block">Qtd: {{ item.quantidade }} x R$ {{ "%.2f"|format(item.preco_unitario) }}</small>
+                        </div>
+                        <span class="font-weight-bold">R$ {{ "%.2f"|format(item.preco_unitario * item.quantidade) }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Informações de Envio</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Endereço:</strong> {{ pedido.cliente.endereco or 'Endereço não cadastrado.' }}</p>
+                    <p><strong>Status de Envio:</strong> <span class="badge badge-warning">Aguardando Envio</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow-sm sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h4 class="card-title">Resumo Financeiro</h4>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <p>Subtotal:</p>
+                        <p class="font-weight-bold">R$ {{ "%.2f"|format(pedido.total) }}</p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p>Frete:</p>
+                        <p class="font-weight-bold">Grátis</p>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <h5>Total Pago:</h5>
+                        <h5 class="text-success">R$ {{ "%.2f"|format(pedido.total) }}</h5>
+                    </div>
+                    <hr>
+                    <p><strong>Método de Pagamento:</strong> {{ pedido.pagamento.metodo }}</p>
+                    <p><strong>Status do Pagamento:</strong> <span class="badge badge-success">{{ pedido.pagamento.status.capitalize() }}</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('main.perfil') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Voltar para Meus Pedidos
+        </a>
+    </div>
+</div>
+{% endblock %}
