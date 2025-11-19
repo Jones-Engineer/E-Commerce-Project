@@ -82,5 +82,4 @@ O projeto está pronto para ser implantado em uma instância AWS EC2, utilizando
     *   Lembre-se de configurar o **Security Group** da EC2 para liberar a porta de acesso (ex: 80 ou 8000).
 
 ---
-**Desenvolvido por:** [Seu Nome/Nome do Aluno] - 4º Período de Ciência da Computação.
-**Nota para o Professor:** O código atende a todos os requisitos do enunciado, com foco especial na **modularidade**, **segurança** (hash de senha) e **integridade transacional** (atualização automática de estoque).
+**Desenvolvido por:** Moreno Jones e Carlos Caetano - 4º Período de Ciência da Computação.
